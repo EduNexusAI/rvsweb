@@ -188,46 +188,63 @@
 
   /* Submit handler — shared by modal and any inline [data-lead-form] */
   document.addEventListener('submit', function (e) {
+    console.log('=== FORM SUBMISSION START ===');
     var form = e.target.closest('[data-lead-form]');
+    console.log('Form found:', !!form);
     if (!form) return;
     e.preventDefault();
     if (form.querySelector('[name="_honey"]') && form.querySelector('[name="_honey"]').value) return;
     var btn = form.querySelector('.btn-submit');
     var err = form.querySelector('[data-lead-err]');
+    console.log('Button:', !!btn, 'Error element:', !!err);
     if (err) err.classList.remove('show');
     var data = {};
     new FormData(form).forEach(function (v, k) { if (k.charAt(0) !== '_' || k === '_subject') data[k] = v; });
     data._captcha = 'false';
+    console.log('Form data collected:', data);
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var done = function () {
+      console.log('=== DONE FUNCTION CALLED ===');
       try {
         var slot = form.parentElement;
-        while (slot && !slot.hasAttribute('data-lead-slot')) {
+        console.log('Starting from:', slot.className);
+        var depth = 0;
+        while (slot && !slot.hasAttribute('data-lead-slot') && depth < 10) {
+          console.log('Looking for slot, depth', depth, ':', slot.className);
           slot = slot.parentElement;
+          depth++;
         }
+        console.log('Found slot:', !!slot, slot ? slot.className : 'none');
         if (!slot) slot = form.parentElement;
         if (slot) {
+          console.log('Setting innerHTML to success markup');
           slot.innerHTML = leadSuccessMarkup();
+          console.log('Success markup set');
           if (overlay && overlay.classList.contains('open')) {
             var sc = slot.querySelector('.lead-success');
             if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); sc.appendChild(b); }
           }
         }
+        console.log('=== DONE COMPLETE ===');
       } catch(e) {
-        console.error('Done error:', e);
+        console.error('=== DONE ERROR ===', e.message, e.stack);
+        fail();
       }
     };
     var fail = function () {
+      console.log('=== FAIL FUNCTION CALLED ===');
       if (btn) { btn.disabled = false; btn.innerHTML = 'Submit &amp; Get Started &rarr;'; }
-      if (err) { err.textContent = 'Something went wrong sending your details. Please call +91 96324 82151 or email revisenseai@gmail.com.'; err.classList.add('show'); }
+      if (err) { err.textContent = '[DEBUG] Error at step - check browser console (F12) for details'; err.classList.add('show'); }
     };
 
-    // Log form data (for demo) then show success
-    console.log('Form submitted:', data);
-
-    // Show success immediately
-    done();
+    console.log('Calling done()...');
+    try {
+      done();
+    } catch(e) {
+      console.error('Exception in form handler:', e.message, e.stack);
+      fail();
+    }
   });
 
   /* expose for explicit triggers if needed */
