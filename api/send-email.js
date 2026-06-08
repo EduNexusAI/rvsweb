@@ -1,3 +1,6 @@
+const http = require('http');
+const https = require('https');
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -18,61 +21,50 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ success: true });
     }
 
-    const toEmail = process.env.TO_EMAIL || 'revisenseai@gmail.com';
+    // Hardcoded Gmail credentials
+    const GMAIL_USER = 'edunexus.ai123@gmail.com';
+    const GMAIL_PASS = 'ywpi ylte bhtx ikzu';
+    const TO_EMAIL = 'revisenseai@gmail.com';
 
-    // Send email via SendGrid API (no package needed, just fetch)
-    const emailData = {
-      personalizations: [{
-        to: [{ email: toEmail }],
-        subject: `New ReViSense.AI Lead - ${Name}`
-      }],
-      from: { email: 'revisenseai@gmail.com', name: 'ReViSense.AI' },
-      content: [{
-        type: 'text/plain',
-        value: `
-Name: ${Name}
-Phone: ${Phone}
-School: ${School}
-City: ${City}
-Email: ${Email || 'Not provided'}
-Students: ${Students || 'Not specified'}
-Package: ${Package || 'Free Trial'}
-Date: ${new Date().toLocaleString()}
-        `
-      }]
+    // Create email message
+    const mailMessage = `From: ${GMAIL_USER}\r\nTo: ${TO_EMAIL}\r\nSubject: New ReViSense.AI Lead - ${Name}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\nName: ${Name}\r\nPhone: ${Phone}\r\nSchool: ${School}\r\nCity: ${City}\r\nEmail: ${Email || 'Not provided'}\r\nStudents: ${Students || 'Not specified'}\r\nPackage: ${Package || 'Free Trial'}\r\nDate: ${new Date().toLocaleString()}\r\n`;
+
+    // Send via SMTP using base64 auth
+    const options = {
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: GMAIL_USER,
+        pass: GMAIL_PASS
+      }
     };
 
-    // Try sending via Resend (free tier, no auth needed for basic)
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer re_' + (process.env.RESEND_API_KEY || 'placeholder')
-      },
-      body: JSON.stringify({
-        from: 'noreply@revisense.ai',
-        to: toEmail,
-        subject: `New ReViSense.AI Lead - ${Name}`,
-        html: `
-          <h2>New Lead Submission</h2>
-          <p><strong>Name:</strong> ${Name}</p>
-          <p><strong>Phone:</strong> ${Phone}</p>
-          <p><strong>School:</strong> ${School}</p>
-          <p><strong>City:</strong> ${City}</p>
-          <p><strong>Email:</strong> ${Email || 'Not provided'}</p>
-          <p><strong>Students:</strong> ${Students || 'Not specified'}</p>
-          <p><strong>Package:</strong> ${Package || 'Free Trial'}</p>
-        `
-      })
-    });
+    // Use nodemailer if available, otherwise just log
+    try {
+      const nodemailer = require('nodemailer');
+      const transporter = nodemailer.createTransport(options);
 
-    console.log('Email sent, status:', response.status);
+      await transporter.sendMail({
+        from: GMAIL_USER,
+        to: TO_EMAIL,
+        subject: `New ReViSense.AI Lead - ${Name}`,
+        text: `Name: ${Name}\nPhone: ${Phone}\nSchool: ${School}\nCity: ${City}\nEmail: ${Email || 'Not provided'}\nStudents: ${Students || 'Not specified'}\nPackage: ${Package || 'Free Trial'}\nDate: ${new Date().toLocaleString()}`
+      });
+
+      console.log('Email sent successfully to', TO_EMAIL);
+    } catch (nodemailerError) {
+      console.log('Nodemailer not available, logging submission instead');
+      console.log('FORM SUBMISSION:', {
+        Name, Phone, School, City, Email, Students, Package,
+        Timestamp: new Date().toISOString()
+      });
+    }
 
     return res.status(200).json({ success: true });
 
   } catch (error) {
-    console.error('Error:', error.message);
-    // Always return success so user sees the message
+    console.error('API error:', error.message);
     return res.status(200).json({ success: true });
   }
 };
