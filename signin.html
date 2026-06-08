@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign in — ReViSense.AI</title>
+<meta name="description" content="Sign in to your ReViSense.AI account — student, teacher, mentor, parent or admin." />
+<link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-wrap"><div class="nav-outer">
+  <nav class="nav">
+    <a class="brand" href="index.html"><span class="mark">R</span><span><span class="name">ReViSense<span class="ai">.AI</span></span><span class="sub">Powered by TrioGenX Groups LLP</span></span></a>
+    <div class="nav-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="analytics.html">Analytics</a><a href="pricing.html">Pricing</a><a href="products.html">Products</a></div>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-primary btn-sm" data-trial data-source="Nav · Book Demo">Book Demo</a>
+      <button class="nav-toggle" data-nav-toggle aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu"><a href="index.html">Home</a><a href="features.html">Features</a><a href="analytics.html">Analytics</a><a href="pricing.html">Pricing</a><a href="products.html">Products</a><a href="#" data-trial class="btn btn-primary">Book Demo</a></div>
+</div></div>
+
+<!-- AUTH -->
+<main class="auth-wrap">
+  <div class="card auth-card reveal in">
+    <div class="a-head">
+      <a class="brand" href="index.html" style="justify-content:center;margin-bottom:18px;"><span class="mark">R</span><span class="name">ReViSense<span class="ai">.AI</span></span></a>
+      <h1>Welcome back</h1>
+      <p>Sign in to your institution dashboard.</p>
+    </div>
+    <form class="auth-form" id="signinForm" novalidate>
+      <div>
+        <span class="f-label">I&rsquo;m signing in as</span>
+        <div class="role-pick">
+          <label><input type="radio" name="role" value="Student" /><span class="rp">Student</span></label>
+          <label><input type="radio" name="role" value="Teacher" checked /><span class="rp">Teacher</span></label>
+          <label><input type="radio" name="role" value="Admin" /><span class="rp">Admin</span></label>
+        </div>
+      </div>
+      <div>
+        <label class="f-label" for="si-email">Email or Username</label>
+        <input class="f-input" id="si-email" type="text" placeholder="you@yourschool.com" autocomplete="username" required />
+      </div>
+      <div>
+        <label class="f-label" for="si-pass">Password</label>
+        <input class="f-input" id="si-pass" type="password" placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+      <div class="auth-row">
+        <label><input type="checkbox" /> Remember me</label>
+        <a href="#" data-no-modal>Forgot password?</a>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg">Sign in &rarr;</button>
+      <div class="lead-err" id="siMsg" style="margin-top:2px;"></div>
+    </form>
+    <div class="auth-divider">NEW TO REVISENSE.AI?</div>
+    <p class="auth-alt">Schools start with a free 15-day trial. <a href="#" data-trial data-source="Sign in · Get started">Get started →</a></p>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer" style="margin-top:0;">
+  <div class="container">
+    <div class="footer-bottom" style="margin-top:0;border-top:none;padding-top:0;">
+      <span>© 2026 ReViSense.AI — Built by TrioGenX Groups LLP. All rights reserved.</span>
+      <span style="display:flex;gap:20px;"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="security.html">Security</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+  (function(){
+    var f = document.getElementById('signinForm');
+    var msg = document.getElementById('siMsg');
+    if(!f) return;
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('si-email').value.trim();
+      var pass = document.getElementById('si-pass').value.trim();
+      if(!email || !pass){
+        msg.textContent = 'Please enter your email and password.';
+        msg.classList.add('show'); return;
+      }
+      msg.style.color = '#2fd6a3';
+      msg.style.background = 'rgba(47,214,163,.08)';
+      msg.style.borderColor = 'rgba(47,214,163,.3)';
+      msg.textContent = 'Demo sign-in — your live dashboard opens here once your school is set up. Contact us to get started.';
+      msg.classList.add('show');
+    });
+  })();
+</script>
+</body>
+</html>
