@@ -213,21 +213,21 @@
       if (err) { err.textContent = 'Something went wrong sending your details. Please call +91 96324 82151 or email revisenseai@gmail.com.'; err.classList.add('show'); }
     };
 
-    // Simple email via HTML form submission (fallback to native form)
-    var fallbackForm = document.createElement('form');
-    fallbackForm.method = 'POST';
-    fallbackForm.action = 'https://formspree.io/f/xyzqwvnb';
-    fallbackForm.style.display = 'none';
+    // Submit via native form to Formspree (no CORS issues)
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://formspree.io/f/mrbzyqjy';
+    form.style.display = 'none';
     Object.keys(data).forEach(function(k) {
       var inp = document.createElement('input');
       inp.type = 'hidden';
       inp.name = k;
       inp.value = data[k];
-      fallbackForm.appendChild(inp);
+      form.appendChild(inp);
     });
-    document.body.appendChild(fallbackForm);
-    fallbackForm.submit();
-    setTimeout(done, 1000);
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(done, 1500);
   });
 
   /* expose for explicit triggers if needed */
