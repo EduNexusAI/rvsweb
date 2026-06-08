@@ -213,7 +213,7 @@
       if (err) { err.textContent = 'Something went wrong sending your details. Please call +91 96324 82151 or email revisenseai@gmail.com.'; err.classList.add('show'); }
     };
 
-    fetch('https://formsubmit.co/ajax/' + LEAD_EMAIL, {
+    fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(data)
