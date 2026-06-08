@@ -201,11 +201,21 @@
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var done = function () {
-      var slot = form.closest('[data-lead-slot]') || form.parentNode;
-      slot.innerHTML = leadSuccessMarkup();
-      if (overlay && overlay.classList.contains('open')) {
-        var sc = slot.querySelector('.lead-success');
-        if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); sc.appendChild(b); }
+      try {
+        var slot = form.parentElement;
+        while (slot && !slot.hasAttribute('data-lead-slot')) {
+          slot = slot.parentElement;
+        }
+        if (!slot) slot = form.parentElement;
+        if (slot) {
+          slot.innerHTML = leadSuccessMarkup();
+          if (overlay && overlay.classList.contains('open')) {
+            var sc = slot.querySelector('.lead-success');
+            if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); sc.appendChild(b); }
+          }
+        }
+      } catch(e) {
+        console.error('Done error:', e);
       }
     };
     var fail = function () {
