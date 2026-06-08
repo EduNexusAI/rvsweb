@@ -208,23 +208,15 @@
       if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); b.onclick = closeLead; sc.appendChild(b); }
     }
 
-    // Send email via Formspree in background
+    // Send email via our API in background
     setTimeout(function() {
-      var emailForm = document.createElement('form');
-      emailForm.method = 'POST';
-      emailForm.action = 'https://formspree.io/f/mrbzyqjy';
-      emailForm.style.display = 'none';
-
-      for (var key in data) {
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = data[key];
-        emailForm.appendChild(input);
-      }
-
-      document.body.appendChild(emailForm);
-      emailForm.submit();
+      fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(function(r) { return r.json(); })
+        .then(function(res) { console.log('Email sent:', res); })
+        .catch(function(err) { console.log('Email error (not critical):', err); });
     }, 200);
   });
 
