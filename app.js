@@ -205,31 +205,25 @@
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var done = function () {
-      console.log('=== DONE FUNCTION CALLED ===');
+      console.log('=== SUCCESS CALLED ===');
+      alert('✓ Form Submitted Successfully!\n\nWe will contact you within 24 hours.\n\nEmail: revisenseai@gmail.com\nPhone: +91 96324 82151');
       try {
         var slot = form.parentElement;
-        console.log('Starting from:', slot.className);
         var depth = 0;
         while (slot && !slot.hasAttribute('data-lead-slot') && depth < 10) {
-          console.log('Looking for slot, depth', depth, ':', slot.className);
           slot = slot.parentElement;
           depth++;
         }
-        console.log('Found slot:', !!slot, slot ? slot.className : 'none');
         if (!slot) slot = form.parentElement;
         if (slot) {
-          console.log('Setting innerHTML to success markup');
           slot.innerHTML = leadSuccessMarkup();
-          console.log('Success markup set');
           if (overlay && overlay.classList.contains('open')) {
             var sc = slot.querySelector('.lead-success');
             if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); sc.appendChild(b); }
           }
         }
-        console.log('=== DONE COMPLETE ===');
       } catch(e) {
-        console.error('=== DONE ERROR ===', e.message, e.stack);
-        fail();
+        console.error('Slot error:', e.message);
       }
     };
     var fail = function () {
