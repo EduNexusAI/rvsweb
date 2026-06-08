@@ -200,20 +200,23 @@
     data._captcha = 'false';
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
-    var done = function () {
-      var slot = form.closest('[data-lead-slot]') || form.parentNode;
-      slot.innerHTML = leadSuccessMarkup();
-      if (overlay && overlay.classList.contains('open')) {
-        var sc = slot.querySelector('.lead-success');
-        if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); sc.appendChild(b); }
-      }
-    };
-    var fail = function () {
-      if (btn) { btn.disabled = false; btn.innerHTML = 'Submit &amp; Get Started &rarr;'; }
-      if (err) { err.textContent = 'Something went wrong sending your details. Please call +91 96324 82151 or email revisenseai@gmail.com.'; err.classList.add('show'); }
-    };
+    // Replace form with success message DIRECTLY
+    var slot = form.parentNode;
+    slot.innerHTML = leadSuccessMarkup();
 
-    // Submit using native form (avoids CORS issues)
+    // Add close button if in overlay
+    if (overlay && overlay.classList.contains('open')) {
+      var sc = slot.querySelector('.lead-success');
+      if (sc) {
+        var b = document.createElement('button');
+        b.className = 'btn btn-primary';
+        b.textContent = 'Close';
+        b.setAttribute('data-lead-close','');
+        sc.appendChild(b);
+      }
+    }
+
+    // Submit data to FormSubmit in background (no need to wait for response)
     var nativeForm = document.createElement('form');
     nativeForm.method = 'POST';
     nativeForm.action = 'https://formsubmit.co/' + LEAD_EMAIL;
@@ -226,14 +229,7 @@
       nativeForm.appendChild(input);
     });
     document.body.appendChild(nativeForm);
-
-    // Show success immediately while form submits in background
-    done();
-
-    // Submit the form after showing success
-    setTimeout(function() {
-      nativeForm.submit();
-    }, 500);
+    nativeForm.submit();
   });
 
   /* expose for explicit triggers if needed */
