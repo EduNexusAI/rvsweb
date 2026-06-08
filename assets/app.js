@@ -207,6 +207,25 @@
       var sc = slot.querySelector('.lead-success');
       if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); b.onclick = closeLead; sc.appendChild(b); }
     }
+
+    // Send email via Formspree in background
+    setTimeout(function() {
+      var emailForm = document.createElement('form');
+      emailForm.method = 'POST';
+      emailForm.action = 'https://formspree.io/f/mrbzyqjy';
+      emailForm.style.display = 'none';
+
+      for (var key in data) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = data[key];
+        emailForm.appendChild(input);
+      }
+
+      document.body.appendChild(emailForm);
+      emailForm.submit();
+    }, 200);
   });
 
   /* expose for explicit triggers if needed */
