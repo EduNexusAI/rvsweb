@@ -213,13 +213,27 @@
       if (err) { err.textContent = 'Something went wrong sending your details. Please call +91 96324 82151 or email revisenseai@gmail.com.'; err.classList.add('show'); }
     };
 
-    fetch('https://formsubmit.co/ajax/' + LEAD_EMAIL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
-    }).then(function (r) { return r.json(); })
-      .then(function (res) { if (res && (res.success === 'true' || res.success === true)) done(); else fail(); })
-      .catch(fail);
+    // Submit using native form (avoids CORS issues)
+    var nativeForm = document.createElement('form');
+    nativeForm.method = 'POST';
+    nativeForm.action = 'https://formsubmit.co/' + LEAD_EMAIL;
+    nativeForm.style.display = 'none';
+    Object.keys(data).forEach(function(key) {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = data[key];
+      nativeForm.appendChild(input);
+    });
+    document.body.appendChild(nativeForm);
+
+    // Show success immediately while form submits in background
+    done();
+
+    // Submit the form after showing success
+    setTimeout(function() {
+      nativeForm.submit();
+    }, 500);
   });
 
   /* expose for explicit triggers if needed */
