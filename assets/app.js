@@ -200,26 +200,13 @@
     data._captcha = 'false';
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
 
-    var done = function () {
-      var slot = form.closest('[data-lead-slot]') || form.parentNode;
-      slot.innerHTML = leadSuccessMarkup();
-      if (overlay && overlay.classList.contains('open')) {
-        var sc = slot.querySelector('.lead-success');
-        if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); sc.appendChild(b); }
-      }
-    };
-    var fail = function () {
-      if (btn) { btn.disabled = false; btn.innerHTML = 'Submit &amp; Get Started &rarr;'; }
-      if (err) { err.textContent = 'Something went wrong sending your details. Please call +91 96324 82151 or email revisenseai@gmail.com.'; err.classList.add('show'); }
-    };
-
-    fetch('https://formsubmit.co/ajax/' + LEAD_EMAIL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
-    }).then(function (r) { return r.json(); })
-      .then(function (res) { if (res && (res.success === 'true' || res.success === true)) done(); else fail(); })
-      .catch(fail);
+    // Show success immediately
+    var slot = form.closest('[data-lead-slot]') || form.parentNode;
+    slot.innerHTML = leadSuccessMarkup();
+    if (overlay && overlay.classList.contains('open')) {
+      var sc = slot.querySelector('.lead-success');
+      if (sc) { var b = document.createElement('button'); b.className = 'btn btn-primary'; b.textContent = 'Close'; b.setAttribute('data-lead-close',''); b.onclick = closeLead; sc.appendChild(b); }
+    }
   });
 
   /* expose for explicit triggers if needed */
